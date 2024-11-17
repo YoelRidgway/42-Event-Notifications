@@ -19,19 +19,26 @@ TOKEN_URL = "https://api.intra.42.fr/oauth/token"
 API_URL = "https://api.intra.42.fr/v2/campus/1/events/"
 CLIENT_ID = os.environ.get("CLIENT_ID")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-CHECK_INTERVAL = 3  # Check every 5 minutes
+CHECK_INTERVAL = 10  # Check every 10 seconds
 
 class TokenManager:
 	def __init__(self):
 		self.access_token = None
 		self.expires_at = 0
+		self.secret_valid_until = float('inf')
 	
 	def get_valid_token(self):
 		"""Get a valid access token, refreshing if necessary."""
 		current_time = time.time()
 		
-		# If token is expired or will expire in next 5 minutes, refresh it
-		if current_time >= (self.expires_at - 300):
+		# Alert if secret is about to expire
+		if current_time > self.secret_valid_until:
+			print(f"Secret has expired")
+		if current_time >= (self.secret_valid_until - 60):
+			print(f"Secret will expire in {self.secret_valid_until - current_time} seconds!")
+
+		# Refresh token if it's expired
+		if current_time >= (self.expires_at):
 			self.refresh_token()
 		
 		return self.access_token
@@ -51,6 +58,7 @@ class TokenManager:
 			
 			self.access_token = token_data['access_token']
 			self.expires_at = time.time() + token_data['expires_in']
+			self.secret_valid_until = token_data['secret_valid_until']
 			
 			print(f"Token refreshed successfully at {datetime.now()}")
 		except Exception as e:
@@ -136,7 +144,6 @@ def main():
 	token_manager = TokenManager()
 	
 	while True:
-		print(f"Checking API at {datetime.now()}")
 		try:
 			# Get current API result
 			current_result = check_api(token_manager)
