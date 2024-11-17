@@ -25,17 +25,36 @@ class TokenManager:
 	def __init__(self):
 		self.access_token = None
 		self.expires_at = 0
-		self.secret_valid_until = float('inf')
+		self.secret_valid_until = 0
 	
 	def get_valid_token(self):
 		"""Get a valid access token, refreshing if necessary."""
+
+		minute = 60
+		hour = 3600
+		day = 86400
+		week = 604800
+
 		current_time = time.time()
 		
+		expire_date = datetime.fromtimestamp(self.secret_valid_until)
 		# Alert if secret is about to expire
-		if current_time > self.secret_valid_until:
+		if not self.secret_valid_until:
+			print(f"First time token generation")
+		elif current_time > self.secret_valid_until:
 			print(f"Secret has expired")
-		if current_time >= (self.secret_valid_until - 60):
-			print(f"Secret will expire in {self.secret_valid_until - current_time} seconds!")
+		# Alert if secret is about to expire in 1 week
+		elif current_time + week > self.secret_valid_until:
+			print(f"Secret will expire in 1 week")
+			send_email("42 API Secret Expiry Alert", f"42 API secret will expire in 1 week ({expire_date})")
+		# Alert if secret is about to expire in 1 day
+		elif current_time + day > self.secret_valid_until:
+			print(f"Secret will expire in 1 day")
+			send_email("42 API Secret Expiry Alert", f"42 API secret will expire in 1 day ({expire_date})")
+		# Alert if secret is about to expire in 1 hour
+		elif current_time + hour > self.secret_valid_until:
+			print(f"Secret will expire in 1 hour")
+			send_email("42 API Secret Expiry Alert", f"42 API secret will expire in 1 hour ({expire_date})")
 
 		# Refresh token if it's expired
 		if current_time >= (self.expires_at):
@@ -158,9 +177,9 @@ def main():
 			# Check for new events
 			if last_result is None:
 				# First run
-				subject = f"New 42 Events Detected ({len(current_result)} new events)"
-				body = f"New events detected at {datetime.now()}\n\nDetails:\n{format_event_details(current_result)}"
-				send_email(subject, body)
+				# subject = f"New 42 Events Detected ({len(current_result)} new events)"
+				# body = f"New events detected at {datetime.now()}\n\nDetails:\n{format_event_details(current_result)}"
+				# send_email(subject, body)
 				save_result(current_result)
 			elif current_result and len(current_result) > 0:
 				# Compare the newest event ID
