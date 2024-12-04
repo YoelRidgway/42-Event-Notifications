@@ -26,14 +26,11 @@ class TokenManager:
 		self.access_token = None
 		self.expires_at = 0
 		self.secret_valid_until = 0
+		# self.times = { minute: 60, hour = 3600, day = 86400, week = 604800 }
+		self.times = [(604800, 'week'), (86400, 'day'), (3600, 'hour'), (60, 'minute')]
 	
 	def get_valid_token(self):
 		"""Get a valid access token, refreshing if necessary."""
-
-		minute = 60
-		hour = 3600
-		day = 86400
-		week = 604800
 
 		current_time = time.time()
 		
@@ -44,17 +41,13 @@ class TokenManager:
 		elif current_time > self.secret_valid_until:
 			print(f"Secret has expired")
 		# Alert if secret is about to expire in 1 week
-		elif current_time + week > self.secret_valid_until:
-			print(f"Secret will expire in 1 week")
-			send_email("42 API Secret Expiry Alert", f"42 API secret will expire in 1 week ({expire_date})")
-		# Alert if secret is about to expire in 1 day
-		elif current_time + day > self.secret_valid_until:
-			print(f"Secret will expire in 1 day")
-			send_email("42 API Secret Expiry Alert", f"42 API secret will expire in 1 day ({expire_date})")
-		# Alert if secret is about to expire in 1 hour
-		elif current_time + hour > self.secret_valid_until:
-			print(f"Secret will expire in 1 hour")
-			send_email("42 API Secret Expiry Alert", f"42 API secret will expire in 1 hour ({expire_date})")
+		elif current_time + self.times[0][0] > self.secret_valid_until:
+			msg = f"42 API secret will expire in 1 {self.times[0][1]} ({expire_date})"
+			print(msg)
+			send_email("42 API Secret Expiry Alert", msg)
+			if len(self.times) > 1:
+				self.times.pop(0)
+			print(self.times)
 
 		# Refresh token if it's expired
 		if current_time >= (self.expires_at):
