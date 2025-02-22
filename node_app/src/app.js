@@ -23,6 +23,8 @@ const SMTP = {
 	pass: process.env.SMTP_PASS
 };
 
+const MAILLIST = process.env.RECIPIENT_EMAILS.split(',');
+
 const tokenManager = new TokenManager(process.env.CLIENT_ID, process.env.CLIENT_SECRET, SMTP);
 
 const pollingService = new PollingService({
@@ -35,10 +37,7 @@ const pollingService = new PollingService({
 	},
 	intervalMs: 0.1 * 60 * 1000, // 10 seconds
 	smtp: SMTP,
-	maillist: [
-		'yoelive@gmail.com',
-		'yoelridgway@gmail.com',
-	],
+	maillist: MAILLIST,
 	composeEmail: composeNewEventsEmail
 });
 
@@ -48,6 +47,18 @@ app.get('/subscribe/:id', (req, res) => {
 });
 
 app.get('/unsubscribe/:id', (req, res) => {
+});
+
+app.get('/secretExpiry', (req, res) => {
+	const details = tokenManager.getSecretExpiry();
+	res.status(200).send(details);
+});
+
+app.get('/events', (req, res) => {
+});
+
+app.get('/health', (req, res) => {
+	res.status(200).send('OK');
 });
 
 app.get('*', (req, res) => {

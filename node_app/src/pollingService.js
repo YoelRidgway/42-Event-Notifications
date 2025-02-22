@@ -42,7 +42,7 @@ class PollingService {
 	async checkEndpoint() {
 		try {
 			const token = await this.tokenManager.getValidToken();
-			logger.debug(`token ${token}`);
+			// logger.debug(`token ${token}`);
 			const response = await axios.get(this.api.endpoint, {
 					params: this.api.params,
 					headers: {

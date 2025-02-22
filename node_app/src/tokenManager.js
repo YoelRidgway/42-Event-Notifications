@@ -59,7 +59,7 @@ class TokenManager {
 					logger.warn(`Secret expires in less than ${message}`);
 					logger.debug(`Secret expires in ${secretTimeLeft} seconds`);
 					logger.debug(`Expires at ${new Date(this.secret_valid_until)} (${this.secret_valid_until})`);
-					// this.sendEmail("42 API Secret Expiry Alert", `Secret expires in less than ${message}`);
+					this.sendEmail("42 API Secret Expiry Alert", `Secret expires in less than ${message}\nExpires at ${new Date(this.secret_valid_until)} (${this.secret_valid_until})`);
 					this.notifiedThresholds.add(threshold);
 				}
 			}
@@ -119,6 +119,17 @@ class TokenManager {
 			logger.error(`Error sending secret expiry email: ${error}`);
 			throw error;
 		}
+	}
+
+	/**
+	 * Get Secret Expiry details
+	 * @returns {object} The secret expiry details
+	 */
+	getSecretExpiry() {
+		return {
+			secret_valid_until: this.secret_valid_until,
+			secret_valid_until_date: new Date(this.secret_valid_until),
+		};
 	}
 
 }
