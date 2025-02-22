@@ -31,7 +31,7 @@ class PollingService {
 		this.mailer = nodemailer.createTransport({
 			host: config.smtp.host,
 			port: config.smtp.port,
-			secure: config.smtp.secure,
+			// secure: config.smtp.secure,
 			auth: {
 				user: config.smtp.user,
 				pass: config.smtp.pass
@@ -41,15 +41,18 @@ class PollingService {
 
 	async checkEndpoint() {
 		try {
+			const token = await this.tokenManager.getValidToken();
+			logger.debug('token:', token);
 			const response = await axios.get(this.api.endpoint, {
 					params: this.api.params,
 					headers: {
-						'Authorization': `Bearer ${this.tokenManager.getValidToken()}`
+						'Authorization': `Bearer ${token}`
 					}
 			});
+
 			return response.data;
 		} catch (error) {
-			logger.error('Error checking endpoint:', error.message);
+			logger.error('Error checking endpoint:', error);
 			throw error;
 		}
 	}
@@ -66,7 +69,7 @@ class PollingService {
 			await this.mailer.sendMail(mailOptions);
 			logger.info('Email sent successfully');
 		} catch (error) {
-			logger.error('Error sending email:', error.message);
+			logger.error('Error sending email:', error);
 			throw error;
 		}
 	}

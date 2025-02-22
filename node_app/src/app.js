@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import fs from 'fs';
 
 import logger from './logger.js';
 import TokenManager from './tokenManager.js';
@@ -17,7 +16,14 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-const tokenManager = new TokenManager(process.env.CLIENT_ID, process.env.CLIENT_SECRET);
+const SMTP = {
+	host: process.env.SMTP_HOST,
+	port: process.env.SMTP_PORT,
+	user: process.env.SMTP_USER,
+	pass: process.env.SMTP_PASS
+};
+
+const tokenManager = new TokenManager(process.env.CLIENT_ID, process.env.CLIENT_SECRET, SMTP);
 
 const pollingService = new PollingService({
 	tokenManager,
@@ -28,12 +34,7 @@ const pollingService = new PollingService({
 		}
 	},
 	intervalMs: 5 * 60 * 1000, // 5 minutes
-	smtp: {
-		host: process.env.SMTP_HOST,
-		port: process.env.SMTP_PORT,
-		user: process.env.SMTP_USER,
-		pass: process.env.SMTP_PASS
-	},
+	smtp: SMTP,
 	maillist: [
 		'yoelive@gmail.com',
 		'yoelridgway@gmail.com',

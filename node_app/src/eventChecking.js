@@ -1,8 +1,12 @@
+import fs from 'fs';
+import logger from './logger.js';
 
 export function composeNewEventsEmail(data) {
 	if (!data || data.length === 0) return null;
-
+	
 	const lastResults = loadLastResults();
+	if (data === lastResults) return null;
+	saveResults(data);
 
 	const lastMaxId = lastResults ? lastResults[0].id : 0;
 	const newEvents = data.filter(event => event.id > lastMaxId);
@@ -72,7 +76,7 @@ function loadLastResults() {
 		const data = fs.readFileSync('last_result.json', 'utf8');
 		return JSON.parse(data);
 	} catch (error) {
-		logger.error('Error loading last results:', error.message);
+		logger.error('Error loading last results:', error);
 		return null;
 	}
 }
