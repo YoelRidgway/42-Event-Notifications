@@ -19,6 +19,7 @@ class PollingService {
 	 * @param {function} config.composeEmail - A function that takes the API response and returns an email subject and body (returns null if no email should be sent)
 	 */
 	constructor(config) {
+		this.tokenManager = config.tokenManager;
 		this.api = config.api;
 		this.intervalMs = config.intervalMs || 5 * 60 * 1000; // Default 5 minutes
 		this.isRunning = false;
