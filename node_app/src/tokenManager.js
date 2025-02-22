@@ -51,6 +51,7 @@ class TokenManager {
 		const now = Date.now();
 		const secretTimeLeft = (this.secret_valid_until - now) / 1000;
 
+
 		if (this.secret_valid_until === 0) {
 			logger.info('First time fetching access token');
 		} else {
@@ -93,7 +94,7 @@ class TokenManager {
 		} else if (data.access_token) {
 			this.access_token = data.access_token;
 			this.token_valid_until = Date.now() + data.expires_in * 1000;
-			this.secret_valid_until = Date.now() + data.secret_valid_until * 1000;
+			this.secret_valid_until = data.secret_valid_until * 1000;
 			logger.info(`Fetched new access token (expires at ${new Date(this.token_valid_until)})`);
 		}
 		return this.access_token;
