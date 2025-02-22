@@ -42,7 +42,7 @@ class PollingService {
 	async checkEndpoint() {
 		try {
 			const token = await this.tokenManager.getValidToken();
-			logger.debug('token:', token);
+			logger.debug(`token ${token}`);
 			const response = await axios.get(this.api.endpoint, {
 					params: this.api.params,
 					headers: {
@@ -52,7 +52,7 @@ class PollingService {
 
 			return response.data;
 		} catch (error) {
-			logger.error('Error checking endpoint:', error);
+			logger.error(`Error checking endpoint: ${error}`);
 			throw error;
 		}
 	}
@@ -69,7 +69,7 @@ class PollingService {
 			await this.mailer.sendMail(mailOptions);
 			logger.info('Email sent successfully');
 		} catch (error) {
-			logger.error('Error sending email:', error);
+			logger.error(`Error sending email: ${error}`);
 			throw error;
 		}
 	}
@@ -81,13 +81,13 @@ class PollingService {
 			this.lastCheck = new Date();
 			const data = await this.checkEndpoint();
 			
-			const { subject, body } = this.composeEmail(data);
-			if (subject && body) {
-				await this.sendEmail(subject, body);
+			const emailContent = this.composeEmail(data);
+			if (emailContent?.subject && emailContent?.body) {
+				await this.sendEmail(emailContent.subject, emailContent.body);
 			}
 			
 		} catch (error) {
-			logger.error('Polling error:', error);
+			logger.error(`Polling error: ${error}`);
 		} finally {
 			// Schedule next poll only after current one is complete
 			if (this.isRunning) {

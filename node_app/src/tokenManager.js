@@ -114,9 +114,9 @@ class TokenManager {
 
 		try {
 			await this.mailer.sendMail(mailOptions);
-			logger.info('Email sent successfully');
+			logger.info('Secret expiry email sent successfully');
 		} catch (error) {
-			logger.error('Error sending email:', error);
+			logger.error(`Error sending secret expiry email: ${error}`);
 			throw error;
 		}
 	}

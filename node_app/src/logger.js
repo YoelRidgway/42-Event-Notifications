@@ -1,11 +1,8 @@
 import winston from 'winston';
 
 // Custom format that adds brackets around the timestamp
-const consoleFormat = winston.format.printf(({ level, message, timestamp, durationMs, tileOrigin, transports }) => {
+const consoleFormat = winston.format.printf(({ level, message, timestamp }) => {
 	let format = `[${timestamp}] ${level}: ${message}`;
-	if (tileOrigin) format += ` - ${tileOrigin}`;
-	if (durationMs) format += ` - ${durationMs}ms`;
-	if (transports) format += ` - ${transports}`;
 	return format;
 });
 
@@ -53,12 +50,5 @@ export const logger = winston.createLogger({
 // logger.info('Hello world');
 // logger.warn('Warning message');
 // logger.error('Error info');
-
-// Example of logging with metadata
-// logger.debug("verbose:", req.originalUrl);
-// logger.verbose("verbose:", req.originalUrl);
-// logger.info("info:", req.originalUrl);
-// logger.warn("warn:", req.originalUrl);
-// logger.error("error:", req.originalUrl);
 
 export default logger;

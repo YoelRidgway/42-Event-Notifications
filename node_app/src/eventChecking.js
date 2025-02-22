@@ -10,6 +10,7 @@ export function composeNewEventsEmail(data) {
 
 	const lastMaxId = lastResults ? lastResults[0].id : 0;
 	const newEvents = data.filter(event => event.id > lastMaxId);
+	if (newEvents.length === 0) return null;
 
 	return {
 		subject: `New 42 Events Detected (${newEvents.length} new ${newEvents.length == 1 ? 'event' : 'events'})`,

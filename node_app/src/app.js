@@ -33,7 +33,7 @@ const pollingService = new PollingService({
 			sort: '-id'
 		}
 	},
-	intervalMs: 5 * 60 * 1000, // 5 minutes
+	intervalMs: 0.1 * 60 * 1000, // 10 seconds
 	smtp: SMTP,
 	maillist: [
 		'yoelive@gmail.com',
