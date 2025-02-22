@@ -1,0 +1,3 @@
+{
+	"ignore": ["logs/*", "last_result.json"]
+}
